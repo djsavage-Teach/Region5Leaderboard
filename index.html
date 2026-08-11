@@ -10,22 +10,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
         :root {
-            --primary-color: #15803d;
-            --primary-dark: #064e3b;
+            --primary-color: #0f172a;
+            --primary-dark: #020617;
         }
 
         body { 
             -webkit-tap-highlight-color: transparent; 
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
+            background-color: #f1f5f9;
             color: #0f172a;
         }
 
         .glass-header {
-            background-color: var(--primary-color);
-            background-image: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .nav-pill {
@@ -36,8 +36,8 @@
 
         .active-main-tab { 
             background-color: white !important;
-            color: #15803d !important;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+            color: #0f172a !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25);
         }
 
         @keyframes fadeInUp {
@@ -58,7 +58,8 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
             padding: 12px 14px;
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -73,7 +74,8 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
             padding: 12px 14px;
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -88,7 +90,8 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 8px;
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
             padding: 12px 14px;
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
@@ -120,19 +123,22 @@
 
         .name-cell { display: flex; align-items: center; font-weight: 800; text-transform: uppercase; overflow: hidden; }
         .name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.88rem; flex: 1; color: #1e293b; }
-        .interactive-name:hover { color: #15803d; text-decoration: underline; cursor: pointer; }
+        .interactive-name:hover { color: #0f172a; text-decoration: underline; cursor: pointer; }
 
         .giant-header {
             font-size: 1.05rem;
             font-weight: 900;
             text-transform: uppercase;
             text-align: center;
-            background-color: var(--primary-color);
-            color: white;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #0f172a;
             padding: 10px 14px;
             border-radius: 1rem;
             margin-bottom: 12px;
-            box-shadow: 0 4px 10px -2px rgba(21, 128, 61, 0.4);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
             letter-spacing: 0.02em;
         }
 
@@ -191,15 +197,15 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             transition: all 0.2s ease;
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2015803d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%20475569' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 16px;
         }
 
         .dropdown-select:focus {
-            border-color: #15803d;
-            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.12);
         }
 
         .modal-overlay {
@@ -304,7 +310,7 @@
                 </div>
 
                 <div class="mb-3 px-1">
-                    <input id="indiv-search" type="text" onkeyup="filterIndivList(this.value)" placeholder="Search player or school..." class="w-full p-3 rounded-xl border border-slate-200 shadow-sm text-sm outline-none focus:ring-2 focus:ring-green-600 bg-white">
+                    <input id="indiv-search" type="text" onkeyup="filterIndivList(this.value)" placeholder="Search player or school..." class="w-full p-3 rounded-xl border border-slate-200 shadow-sm text-sm outline-none focus:ring-2 focus:ring-slate-800 bg-white">
                 </div>
 
                 <div id="indiv-header-row" class="text-[10px] font-black uppercase text-slate-400 mb-2 px-3 grid grid-cols-[40px_1fr_90px] gap-2 items-center">
@@ -345,18 +351,26 @@
             "Lakeside"
         ];
 
-        // TEAM SCORES PER EVENT
-        const TEAM_SCORES = {
-            "The Barn": {
-                "FREMONT": 286,
-                "WEST FIELD": 287,
-                "NORTHRIDGE": 298,
-                "CLEARFIELD": 303,
-                "BOX ELDER": 307,
-                "BONNEVILLE": 311,
-                "ROY": 325
-            }
-        };
+        // DYNAMIC TEAM SCORING: Automatically calculated from top 4 player scores per school for each event
+        function getTeamScoresForEvent(tourney) {
+            const teamScores = {};
+            let hasAnyScores = false;
+
+            SCHOOLS.forEach(s => {
+                const scores = INDIVIDUAL_PLAYERS
+                    .filter(p => p.school === s.id && typeof p.scores?.[tourney] === 'number' && !isNaN(p.scores[tourney]))
+                    .map(p => p.scores[tourney])
+                    .sort((a, b) => a - b);
+
+                if (scores.length >= 4) {
+                    const top4Sum = scores.slice(0, 4).reduce((sum, val) => sum + val, 0);
+                    teamScores[s.id] = top4Sum;
+                    hasAnyScores = true;
+                }
+            });
+
+            return hasAnyScores ? teamScores : null;
+        }
 
         const INDIVIDUAL_PLAYERS = [
             // BONNEVILLE
@@ -477,8 +491,8 @@
                 };
             });
 
-            Object.keys(TEAM_SCORES).forEach(tourney => {
-                const scores = TEAM_SCORES[tourney];
+            ALL_TOURNAMENTS.forEach(tourney => {
+                const scores = getTeamScoresForEvent(tourney);
                 if (!scores || Object.keys(scores).length === 0) return;
 
                 const sorted = Object.keys(scores)
@@ -555,7 +569,7 @@
             let options = `<option value="SEASON" ${activeTeamSubtab === 'SEASON' ? 'selected' : ''}>🏆 Season Standings</option>`;
             
             ALL_TOURNAMENTS.forEach(t => {
-                const isPlayed = TEAM_SCORES[t] !== undefined;
+                const isPlayed = getTeamScoresForEvent(t) !== null;
                 const playedBadge = isPlayed ? ' ✓' : '';
                 options += `<option value="${t}" ${activeTeamSubtab === t ? 'selected' : ''}>${t}${playedBadge}</option>`;
             });
@@ -597,7 +611,7 @@
                         </div>
                         <div class="text-center font-black text-sm text-amber-600">${t.totalPoints} PTS</div>
                         <div class="text-center font-black text-sm text-slate-700">${t.avgScore}</div>
-                        <div class="text-right font-black text-sm text-emerald-700">${t.wins}</div>
+                        <div class="text-right font-black text-sm text-slate-800">${t.wins}</div>
                     </div>`;
                 }).join('');
 
@@ -610,11 +624,11 @@
                     <span class="text-right">Pts Earned</span>
                 `;
 
-                const eventScores = TEAM_SCORES[activeTeamSubtab];
+                const eventScores = getTeamScoresForEvent(activeTeamSubtab);
                 if (!eventScores) {
                     list.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border text-slate-400 font-bold uppercase italic shadow-sm">
                         <div class="text-2xl mb-1">⛳</div>
-                        ${activeTeamSubtab} has not been played yet
+                        ${activeTeamSubtab} has not been played yet (Requires 4+ player scores per team)
                     </div>`;
                     return;
                 }
@@ -712,7 +726,7 @@
                             ${getLogoHtml(p.school)}
                             <span class="name-text interactive-name font-bold" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
                         </div>
-                        <div class="text-center font-black text-base text-emerald-700">${p.score}</div>
+                        <div class="text-center font-black text-base text-slate-800">${p.score}</div>
                     </div>`;
                 }).join('');
             }
@@ -746,7 +760,7 @@
                         <td class="py-2.5 px-3 font-bold text-slate-800">
                             <span class="interactive-name" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
                         </td>
-                        <td class="py-2.5 px-3 text-center font-black text-emerald-700">${barnScore}</td>
+                        <td class="py-2.5 px-3 text-center font-black text-slate-800">${barnScore}</td>
                         <td class="py-2.5 px-3 text-center font-black text-slate-800">${p.avgDisplay}</td>
                     </tr>
                 `;
@@ -764,7 +778,7 @@
                     </div>
                     <div class="bg-white p-3 rounded-xl border shadow-sm">
                         <span class="text-[10px] font-black text-slate-400 block uppercase tracking-wider">Wins</span>
-                        <span class="text-lg sm:text-xl font-black text-emerald-700">${teamSeason.wins || 0}</span>
+                        <span class="text-lg sm:text-xl font-black text-slate-800">${teamSeason.wins || 0}</span>
                     </div>
                 </div>
 
@@ -809,7 +823,7 @@
                 const sc = player.scores[t];
                 return `<div class="flex justify-between items-center py-2 border-b text-xs">
                     <span class="font-bold text-slate-600">${t}</span>
-                    <span class="font-black text-slate-900 ${sc ? 'text-emerald-700' : 'text-slate-300'}">${sc ? sc + ' strokes' : '—'}</span>
+                    <span class="font-black ${sc ? 'text-slate-900' : 'text-slate-300'}">${sc ? sc + ' strokes' : '—'}</span>
                 </div>`;
             }).join('');
 
@@ -820,8 +834,8 @@
                         <span class="text-xl font-black text-slate-800">${player.avgDisplay}</span>
                     </div>
                     <div class="bg-white p-3 rounded-xl border shadow-sm">
-                        <span class="text-[10px] font-black text-emerald-600 block uppercase tracking-wider">Rounds Played</span>
-                        <span class="text-xl font-black text-emerald-700">${player.roundsPlayed}</span>
+                        <span class="text-[10px] font-black text-slate-500 block uppercase tracking-wider">Rounds Played</span>
+                        <span class="text-xl font-black text-slate-800">${player.roundsPlayed}</span>
                     </div>
                 </div>
                 <div class="bg-white p-4 rounded-xl border shadow-sm space-y-1">
