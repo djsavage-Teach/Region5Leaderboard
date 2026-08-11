@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Region 5 Golf Leaderboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+        :root {
+            --primary-color: #15803d;
+            --primary-dark: #064e3b;
+        }
+
+        body { 
+            -webkit-tap-highlight-color: transparent; 
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .glass-header {
+            background-color: var(--primary-color);
+            background-image: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.35) 100%);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .nav-pill {
+            transition: all 0.2s ease;
+            border-radius: 9999px;
+            font-weight: 800;
+        }
+
+        .active-main-tab { 
+            background-color: white !important;
+            color: #15803d !important;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .row-animate {
+            animation: fadeInUp 0.25s ease forwards;
+            opacity: 0;
+        }
+
+        .centered-container { max-width: 760px; margin: 0 auto; }
+
+        .lb-grid-team-season {
+            display: grid;
+            grid-template-columns: 40px 1fr 75px 85px 55px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: white;
+            padding: 12px 14px;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+
+        .lb-grid-team-event {
+            display: grid;
+            grid-template-columns: 40px 1fr 90px 80px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: white;
+            padding: 12px 14px;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            cursor: pointer;
+        }
+
+        .lb-grid-indiv {
+            display: grid;
+            grid-template-columns: 40px 1fr 90px;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            background: white;
+            padding: 12px 14px;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.06);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .lb-grid-team-season:hover, .lb-grid-team-event:hover, .lb-grid-indiv:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            font-weight: 900;
+            font-size: 0.85rem;
+            background-color: #f1f5f9;
+            color: #64748b;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #fef08a, #eab308); color: #713f12; }
+        .rank-2 { background: linear-gradient(135deg, #f1f5f9, #94a3b8); color: #0f172a; }
+        .rank-3 { background: linear-gradient(135deg, #ffedd5, #ea580c); color: #7c2d12; }
+
+        .name-cell { display: flex; align-items: center; font-weight: 800; text-transform: uppercase; overflow: hidden; }
+        .name-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.88rem; flex: 1; color: #1e293b; }
+        .interactive-name:hover { color: #15803d; text-decoration: underline; cursor: pointer; }
+
+        .giant-header {
+            font-size: 1.05rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-align: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 1rem;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px -2px rgba(21, 128, 61, 0.4);
+            letter-spacing: 0.02em;
+        }
+
+        .school-banner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding-top: 6px;
+        }
+        
+        .school-logo-btn { 
+            width: 30px; 
+            height: 30px; 
+            object-fit: contain; 
+            background: white; 
+            padding: 3px; 
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .school-logo-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+        }
+
+        .inline-logo { 
+            width: 22px; 
+            height: 22px; 
+            min-width: 22px; 
+            object-fit: contain; 
+            display: inline-block; 
+            vertical-align: middle; 
+            margin-right: 8px; 
+            background: white; 
+            padding: 2px; 
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-select {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 0.75rem;
+            background-color: white;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+            outline: none;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2015803d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .dropdown-select:focus {
+            border-color: #15803d;
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.15);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000; padding: 12px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- PLAYER MODAL -->
+    <div id="player-modal" class="modal-overlay hidden" onclick="closePlayerModal(event)">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden transform transition-all" onclick="event.stopPropagation()">
+            <div id="modal-header-bg" class="bg-stone-900 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div id="modal-logo" class="bg-white p-1 rounded-lg"></div>
+                    <div>
+                        <h3 id="modal-player-name" class="text-xl font-black uppercase italic tracking-tight">Player Name</h3>
+                        <p id="modal-player-school" class="text-xs font-bold uppercase tracking-wider text-white/80">School</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('player-modal').classList.add('hidden')" class="p-2 hover:bg-white/10 rounded-full font-bold text-white text-lg">✕</button>
+            </div>
+            <div id="modal-player-content" class="p-5 bg-slate-50 space-y-4 max-h-[80vh] overflow-y-auto"></div>
+            <div class="p-4 bg-white border-t flex justify-center">
+                <button onclick="document.getElementById('player-modal').classList.add('hidden')" class="px-6 py-2 bg-slate-800 text-white font-black uppercase text-xs rounded-xl hover:bg-slate-900 shadow">Close Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEAM DETAIL MODAL -->
+    <div id="team-modal" class="modal-overlay hidden" onclick="closeTeamModal(event)">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden transform transition-all" onclick="event.stopPropagation()">
+            <div id="team-modal-header-bg" class="bg-stone-900 text-white p-5 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div id="team-modal-logo" class="bg-white p-1.5 rounded-xl shadow"></div>
+                    <div>
+                        <h3 id="team-modal-name" class="text-2xl font-black uppercase italic tracking-tight">Team Name</h3>
+                        <p id="team-modal-sub" class="text-xs font-bold uppercase tracking-wider text-white/80">Region 5 Golf Roster & Stats</p>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('team-modal').classList.add('hidden')" class="p-2 hover:bg-white/10 rounded-full font-bold text-white text-lg">✕</button>
+            </div>
+            
+            <div id="team-modal-content" class="p-4 sm:p-5 bg-slate-50 space-y-4 max-h-[80vh] overflow-y-auto">
+                <!-- Content generated via JS -->
+            </div>
+
+            <div class="p-4 bg-white border-t flex justify-center">
+                <button onclick="document.getElementById('team-modal').classList.add('hidden')" class="px-6 py-2 bg-slate-800 text-white font-black uppercase text-xs rounded-xl hover:bg-slate-900 shadow">Close Team View</button>
+            </div>
+        </div>
+    </div>
+
+    <header class="glass-header text-white shadow-xl sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 pt-4 pb-2">
+            <div class="flex flex-col items-center text-center w-full">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tight uppercase italic drop-shadow-md">Region 5 Golf</h1>
+                <span class="text-[10px] font-black tracking-[0.25em] text-white/90 uppercase mt-0.5">Official Season Archive</span>
+                <div id="school-logo-banner" class="school-banner"></div>
+            </div>
+        </div>
+        <nav class="max-w-5xl mx-auto px-3 pb-3 pt-2">
+            <div class="flex justify-center text-xs font-black uppercase gap-2">
+                <button onclick="setView('team')" id="tab-team" class="nav-pill px-6 py-2.5 active-main-tab text-white/80 hover:text-white">Team Standings</button>
+                <button onclick="setView('indiv')" id="tab-indiv" class="nav-pill px-6 py-2.5 text-white/80 hover:text-white">Individual Standings</button>
+            </div>
+        </nav>
+    </header>
+
+    <main id="main-content" class="max-w-5xl mx-auto p-3 sm:p-4 pb-20">
+        
+        <!-- TEAM STANDINGS VIEW -->
+        <div id="view-team" class="view">
+            <div class="centered-container">
+                <div class="giant-header mt-1">Team Leaderboard</div>
+                
+                <!-- Tournament Dropdown for Teams -->
+                <div class="mb-3">
+                    <label for="team-subtabs" class="text-[10px] font-black uppercase text-slate-400 mb-1 px-1 tracking-wider block">Select Event / Season</label>
+                    <select id="team-subtabs" onchange="setTeamSubtab(this.value)" class="dropdown-select"></select>
+                </div>
+
+                <div id="team-header-row" class="text-[10px] font-black uppercase text-slate-400 mb-2 px-3"></div>
+                <div id="team-standings-list"></div>
+            </div>
+        </div>
+
+        <!-- INDIVIDUAL STANDINGS VIEW -->
+        <div id="view-indiv" class="view hidden">
+            <div class="centered-container">
+                <div class="giant-header mt-1">Individual Leaderboard</div>
+                
+                <!-- Tournament Dropdown for Individuals -->
+                <div class="mb-3">
+                    <label for="indiv-subtabs" class="text-[10px] font-black uppercase text-slate-400 mb-1 px-1 tracking-wider block">Select Event / Season</label>
+                    <select id="indiv-subtabs" onchange="setIndivSubtab(this.value)" class="dropdown-select"></select>
+                </div>
+
+                <div class="mb-3 px-1">
+                    <input id="indiv-search" type="text" onkeyup="filterIndivList(this.value)" placeholder="Search player or school..." class="w-full p-3 rounded-xl border border-slate-200 shadow-sm text-sm outline-none focus:ring-2 focus:ring-green-600 bg-white">
+                </div>
+
+                <div id="indiv-header-row" class="text-[10px] font-black uppercase text-slate-400 mb-2 px-3 grid grid-cols-[40px_1fr_90px] gap-2 items-center">
+                    <span>Rank</span>
+                    <span>Player Name</span>
+                    <span id="indiv-col-3" class="text-center">Average</span>
+                </div>
+                <div id="indiv-standings-list"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        /*******************************************************************************
+         * REGION 5 GOLF - ACCURATE SCHOOL ROSTERS & SEASON DATA
+         *******************************************************************************/
+
+        const SCHOOLS = [
+            { id: "FREMONT", name: "FREMONT", url: "https://assets.hometownticketing.com/clients/fremontathletics/logos/school_logo_c1182661.png", color: "#2563eb" }, 
+            { id: "WEST FIELD", name: "WEST FIELD", url: "https://assets.hometownticketing.com/clients/westfield/logos/school_logo_ebc133bd.png", color: "#ea580c" }, 
+            { id: "NORTHRIDGE", name: "NORTHRIDGE", url: "https://sportshub2-uploads.vnn-prod.zone/files/sites/429/2020/09/29204806/KnightVectorGraphic.png", color: "#991b1b" }, 
+            { id: "CLEARFIELD", name: "CLEARFIELD", url: "https://sportshub2-uploads.vnn-prod.zone/files/sites/1722/2017/07/26012144/12552.png", color: "#15803d" }, 
+            { id: "BOX ELDER", name: "BOX ELDER", url: "https://cmsv2-assets.apptegy.net/uploads/7672/logo/9154/bee_new.png", color: "#7e22ce" }, 
+            { id: "BONNEVILLE", name: "BONNEVILLE", url: "https://core-docs.s3.amazonaws.com/weber_school_district__ut_ar/article/image/large_b2cffc0f-68ec-428c-a650-81767d56453b.png", color: "#1e3a8a" }, 
+            { id: "ROY", name: "ROY", url: "https://cmsv2-assets.apptegy.net/uploads/25031/file/5081095/46ab505e-f612-4145-9e63-ec68e8782242.jpeg", color: "#ca8a04" } 
+        ];
+
+        const ALL_TOURNAMENTS = [
+            "The Barn",
+            "Cranefield",
+            "The Bluff",
+            "Eagle Mtn",
+            "Sun Hills",
+            "Remuda",
+            "Riverside",
+            "Valley View",
+            "Lakeside"
+        ];
+
+        // TEAM SCORES PER EVENT
+        const TEAM_SCORES = {
+            "The Barn": {
+                "FREMONT": 286,
+                "WEST FIELD": 287,
+                "NORTHRIDGE": 298,
+                "CLEARFIELD": 303,
+                "BOX ELDER": 307,
+                "BONNEVILLE": 311,
+                "ROY": 325
+            }
+        };
+
+        const INDIVIDUAL_PLAYERS = [
+            // BONNEVILLE
+            { name: "Grayson Sanders", school: "BONNEVILLE", scores: { "The Barn": 72 } },
+            { name: "Brycen Eskelsen", school: "BONNEVILLE", scores: { "The Barn": 76 } },
+            { name: "Brighton Mansfield", school: "BONNEVILLE", scores: { "The Barn": 81 } },
+            { name: "Brewster Shears", school: "BONNEVILLE", scores: { "The Barn": 82 } },
+            { name: "Jordan Nielsen", school: "BONNEVILLE", scores: { "The Barn": 84 } },
+            { name: "Carter Pierce", school: "BONNEVILLE", scores: { "The Barn": 86 } },
+            { name: "AJ Ohlin", school: "BONNEVILLE", scores: { "The Barn": 93 } },
+            { name: "Jackson Thon", school: "BONNEVILLE", scores: { "The Barn": 100 } },
+            { name: "Kacen Manor", school: "BONNEVILLE", scores: {} },
+            { name: "Rayce Mortensen", school: "BONNEVILLE", scores: {} },
+            { name: "Tommy Turner", school: "BONNEVILLE", scores: {} },
+            { name: "Soren Kronmiller", school: "BONNEVILLE", scores: {} },
+
+            // BOX ELDER
+            { name: "Gavin Wight", school: "BOX ELDER", scores: { "The Barn": 69 } },
+            { name: "Lincoln Thurgood", school: "BOX ELDER", scores: { "The Barn": 78 } },
+            { name: "Jarom Ficklin", school: "BOX ELDER", scores: { "The Barn": 80 } },
+            { name: "Krew Peterson", school: "BOX ELDER", scores: { "The Barn": 80 } },
+            { name: "Cohen Jeppsen", school: "BOX ELDER", scores: { "The Barn": 82 } },
+            { name: "Cayden Ammons", school: "BOX ELDER", scores: { "The Barn": 85 } },
+            { name: "Zenock Diehl", school: "BOX ELDER", scores: { "The Barn": 88 } },
+            { name: "Kyler Behunin", school: "BOX ELDER", scores: { "The Barn": 91 } },
+            { name: "Jeter Blackmer", school: "BOX ELDER", scores: {} },
+            { name: "Harper Jeppsen", school: "BOX ELDER", scores: {} },
+            { name: "Beckhem Mason", school: "BOX ELDER", scores: {} },
+            { name: "Dax Woodward", school: "BOX ELDER", scores: {} },
+
+            // CLEARFIELD
+            { name: "Drew Brough", school: "CLEARFIELD", scores: { "The Barn": 74 } },
+            { name: "Braxton Smith", school: "CLEARFIELD", scores: { "The Barn": 75 } },
+            { name: "Bryce Detry", school: "CLEARFIELD", scores: { "The Barn": 77 } },
+            { name: "Kesler Tanner", school: "CLEARFIELD", scores: { "The Barn": 77 } },
+            { name: "Garrett Braswell", school: "CLEARFIELD", scores: { "The Barn": 79 } },
+            { name: "Roper Smith", school: "CLEARFIELD", scores: { "The Barn": 80 } },
+            { name: "Grady Keime", school: "CLEARFIELD", scores: { "The Barn": 83 } },
+            { name: "Carter Murdock", school: "CLEARFIELD", scores: { "The Barn": 92 } },
+            { name: "Easton Van", school: "CLEARFIELD", scores: {} },
+            { name: "Mack Johnson", school: "CLEARFIELD", scores: {} },
+            { name: "Gunnar McKellar", school: "CLEARFIELD", scores: {} },
+            { name: "Cooper Clark", school: "CLEARFIELD", scores: {} },
+
+            // FREMONT
+            { name: "Dallas Jiron", school: "FREMONT", scores: { "The Barn": 68 } },
+            { name: "Jett Hadley", school: "FREMONT", scores: { "The Barn": 70 } },
+            { name: "Connor Skeen", school: "FREMONT", scores: { "The Barn": 73 } },
+            { name: "Tad Grange", school: "FREMONT", scores: { "The Barn": 75 } },
+            { name: "Beck Olsen", school: "FREMONT", scores: { "The Barn": 77 } },
+            { name: "Carter Eskelson", school: "FREMONT", scores: { "The Barn": 81 } },
+            { name: "Laker Laloli", school: "FREMONT", scores: { "The Barn": 82 } },
+            { name: "Grant Carnahan", school: "FREMONT", scores: { "The Barn": 82 } },
+            { name: "Luke Manning", school: "FREMONT", scores: {} },
+            { name: "Blake Fowers", school: "FREMONT", scores: {} },
+            { name: "Bennett Walsh", school: "FREMONT", scores: {} },
+            { name: "Camden Hendry", school: "FREMONT", scores: {} },
+            { name: "Luke Webber", school: "FREMONT", scores: {} },
+            { name: "Beck Watson", school: "FREMONT", scores: {} },
+
+            // NORTHRIDGE
+            { name: "Luke Williams", school: "NORTHRIDGE", scores: { "The Barn": 73 } },
+            { name: "Bridger Buchanan", school: "NORTHRIDGE", scores: { "The Barn": 74 } },
+            { name: "Kayden Kirby", school: "NORTHRIDGE", scores: { "The Barn": 74 } },
+            { name: "Brody Hennefer", school: "NORTHRIDGE", scores: { "The Barn": 77 } },
+            { name: "Kord Fowers", school: "NORTHRIDGE", scores: { "The Barn": 79 } },
+            { name: "Nick Hadley", school: "NORTHRIDGE", scores: { "The Barn": 80 } },
+            { name: "Levi North", school: "NORTHRIDGE", scores: { "The Barn": 83 } },
+            { name: "Max Schenck", school: "NORTHRIDGE", scores: { "The Barn": 85 } },
+            { name: "Beck Adams", school: "NORTHRIDGE", scores: {} },
+            { name: "Jack Squires", school: "NORTHRIDGE", scores: {} },
+            { name: "Cam Schenck", school: "NORTHRIDGE", scores: {} },
+            { name: "Mason Clark", school: "NORTHRIDGE", scores: {} },
+
+            // ROY
+            { name: "Logan Kilcrease", school: "ROY", scores: { "The Barn": 76 } },
+            { name: "Zack Schumacher", school: "ROY", scores: { "The Barn": 77 } },
+            { name: "Tyson Ninalga", school: "ROY", scores: { "The Barn": 84 } },
+            { name: "Nehemiah Garcia", school: "ROY", scores: { "The Barn": 88 } },
+            { name: "Brenden Hill", school: "ROY", scores: { "The Barn": 88 } },
+            { name: "Hudson Peck", school: "ROY", scores: { "The Barn": 88 } },
+            { name: "Jaxton Diamond", school: "ROY", scores: { "The Barn": 92 } },
+            { name: "Lincoln Baty", school: "ROY", scores: { "The Barn": 100 } },
+            { name: "Anthony Parker", school: "ROY", scores: {} },
+            { name: "Nolan Sanders", school: "ROY", scores: {} },
+            { name: "Avin James", school: "ROY", scores: {} },
+            { name: "Boston Barrett", school: "ROY", scores: {} },
+
+            // WEST FIELD
+            { name: "Ethan Luna", school: "WEST FIELD", scores: { "The Barn": 63 } },
+            { name: "Roc Hansen", school: "WEST FIELD", scores: { "The Barn": 72 } },
+            { name: "Daxton Seager", school: "WEST FIELD", scores: { "The Barn": 76 } },
+            { name: "Lincoln Miller", school: "WEST FIELD", scores: { "The Barn": 76 } },
+            { name: "Ashtun Jarvis", school: "WEST FIELD", scores: { "The Barn": 76 } },
+            { name: "Boston Chambers", school: "WEST FIELD", scores: { "The Barn": 79 } },
+            { name: "Holden Sanford", school: "WEST FIELD", scores: { "The Barn": 79 } },
+            { name: "Beckem Miller", school: "WEST FIELD", scores: { "The Barn": 80 } },
+            { name: "Mack Herzog", school: "WEST FIELD", scores: {} },
+            { name: "Casey Scott", school: "WEST FIELD", scores: {} }
+        ];
+
+        let activeTeamSubtab = "SEASON";
+        let activeIndivSubtab = "SEASON";
+
+        const imgFallback = "this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/e/e4/Ellipsis_icon.png';";
+        const TEAM_POINT_SCALE = [7, 6, 5, 4, 3, 2, 1];
+
+        function computeTeamSeasonData() {
+            const teamTotals = {};
+            SCHOOLS.forEach(s => {
+                teamTotals[s.id] = {
+                    id: s.id,
+                    name: s.name,
+                    totalPoints: 0,
+                    totalStrokes: 0,
+                    eventsPlayed: 0,
+                    wins: 0
+                };
+            });
+
+            Object.keys(TEAM_SCORES).forEach(tourney => {
+                const scores = TEAM_SCORES[tourney];
+                if (!scores || Object.keys(scores).length === 0) return;
+
+                const sorted = Object.keys(scores)
+                    .map(t => ({ team: t, score: scores[t] }))
+                    .sort((a, b) => a.score - b.score);
+
+                sorted.forEach((item, index) => {
+                    const pts = TEAM_POINT_SCALE[index] || 1;
+                    if (teamTotals[item.team]) {
+                        teamTotals[item.team].totalPoints += pts;
+                        teamTotals[item.team].totalStrokes += item.score;
+                        teamTotals[item.team].eventsPlayed += 1;
+                        if (index === 0) teamTotals[item.team].wins += 1;
+                    }
+                });
+            });
+
+            return Object.values(teamTotals).map(t => {
+                t.avgScore = t.eventsPlayed > 0 ? (t.totalStrokes / t.eventsPlayed).toFixed(1) : "-";
+                return t;
+            });
+        }
+
+        function computeIndividualSeasonData() {
+            return INDIVIDUAL_PLAYERS.map(player => {
+                const tourneyKeys = Object.keys(player.scores || {});
+                let totalStrokes = 0;
+                let roundsPlayed = 0;
+
+                tourneyKeys.forEach(t => {
+                    const sc = player.scores[t];
+                    if (typeof sc === 'number' && !isNaN(sc)) {
+                        totalStrokes += sc;
+                        roundsPlayed += 1;
+                    }
+                });
+
+                const avg = roundsPlayed > 0 ? (totalStrokes / roundsPlayed).toFixed(2) : 999;
+                return {
+                    ...player,
+                    roundsPlayed,
+                    totalStrokes,
+                    avg: roundsPlayed > 0 ? parseFloat(avg) : 999,
+                    avgDisplay: roundsPlayed > 0 ? avg : "-"
+                };
+            });
+        }
+
+        function renderSchoolBanner() {
+            const banner = document.getElementById('school-logo-banner');
+            if (!banner) return;
+            banner.innerHTML = SCHOOLS.map(s => 
+                `<img src="${s.url}" class="school-logo-btn" title="View ${s.name} Page" alt="${s.name}" onclick="openTeamModal('${s.id}')" onerror="${imgFallback}">`
+            ).join('');
+        }
+
+        function getLogoHtml(schoolName, size = '22px') {
+            if (!schoolName) return "";
+            const match = SCHOOLS.find(s => schoolName.toUpperCase().includes(s.id));
+            return match ? `<img src="${match.url}" style="width:${size}; height:${size};" class="inline-logo" alt="${match.name}" onerror="${imgFallback}">` : "";
+        }
+
+        function setView(view) {
+            document.querySelectorAll('.view').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            
+            document.querySelectorAll('.nav-pill').forEach(el => el.classList.remove('active-main-tab'));
+            const activeBtn = document.getElementById(`tab-${view}`);
+            if (activeBtn) activeBtn.classList.add('active-main-tab');
+        }
+
+        function renderTeamSubtabs() {
+            const container = document.getElementById('team-subtabs');
+            let options = `<option value="SEASON" ${activeTeamSubtab === 'SEASON' ? 'selected' : ''}>🏆 Season Standings</option>`;
+            
+            ALL_TOURNAMENTS.forEach(t => {
+                const isPlayed = TEAM_SCORES[t] !== undefined;
+                const playedBadge = isPlayed ? ' ✓' : '';
+                options += `<option value="${t}" ${activeTeamSubtab === t ? 'selected' : ''}>${t}${playedBadge}</option>`;
+            });
+
+            container.innerHTML = options;
+        }
+
+        function setTeamSubtab(sub) {
+            activeTeamSubtab = sub;
+            renderTeamStandings();
+        }
+
+        function renderTeamStandings() {
+            const list = document.getElementById('team-standings-list');
+            const headerRow = document.getElementById('team-header-row');
+
+            if (activeTeamSubtab === 'SEASON') {
+                headerRow.className = "text-[10px] font-black uppercase text-slate-400 mb-2 px-3 grid grid-cols-[40px_1fr_75px_85px_55px] gap-2 items-center";
+                headerRow.innerHTML = `
+                    <span>Rank</span>
+                    <span>Team / School</span>
+                    <span class="text-center">Total Pts</span>
+                    <span class="text-center">Stroke Avg</span>
+                    <span class="text-right">Wins</span>
+                `;
+
+                const teams = computeTeamSeasonData().sort((a,b) => b.totalPoints - a.totalPoints || a.totalStrokes - b.totalStrokes);
+
+                list.innerHTML = teams.map((t, idx) => {
+                    const rank = idx + 1;
+                    const schoolMatch = SCHOOLS.find(s => s.id === t.name);
+                    const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+
+                    return `<div onclick="openTeamModal('${t.id}')" class="lb-grid-team-season row-animate" style="border-left: 5px solid ${schoolMatch ? schoolMatch.color : '#cbd5e1'}; animation-delay: ${idx * 0.04}s">
+                        <div class="rank-badge ${rankClass}">#${rank}</div>
+                        <div class="name-cell">
+                            ${getLogoHtml(t.name)}
+                            <span class="name-text font-black text-slate-800">${t.name}</span>
+                        </div>
+                        <div class="text-center font-black text-sm text-amber-600">${t.totalPoints} PTS</div>
+                        <div class="text-center font-black text-sm text-slate-700">${t.avgScore}</div>
+                        <div class="text-right font-black text-sm text-emerald-700">${t.wins}</div>
+                    </div>`;
+                }).join('');
+
+            } else {
+                headerRow.className = "text-[10px] font-black uppercase text-slate-400 mb-2 px-3 grid grid-cols-[40px_1fr_90px_80px] gap-2 items-center";
+                headerRow.innerHTML = `
+                    <span>Rank</span>
+                    <span>Team / School</span>
+                    <span class="text-center">Event Score</span>
+                    <span class="text-right">Pts Earned</span>
+                `;
+
+                const eventScores = TEAM_SCORES[activeTeamSubtab];
+                if (!eventScores) {
+                    list.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border text-slate-400 font-bold uppercase italic shadow-sm">
+                        <div class="text-2xl mb-1">⛳</div>
+                        ${activeTeamSubtab} has not been played yet
+                    </div>`;
+                    return;
+                }
+
+                const sorted = Object.keys(eventScores)
+                    .map(team => ({ team, score: eventScores[team] }))
+                    .sort((a,b) => a.score - b.score);
+
+                list.innerHTML = sorted.map((t, idx) => {
+                    const rank = idx + 1;
+                    const pts = TEAM_POINT_SCALE[idx] || 1;
+                    const schoolMatch = SCHOOLS.find(s => s.id === t.team);
+                    const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+
+                    return `<div onclick="openTeamModal('${t.team}')" class="lb-grid-team-event row-animate" style="border-left: 5px solid ${schoolMatch ? schoolMatch.color : '#cbd5e1'}; animation-delay: ${idx * 0.04}s">
+                        <div class="rank-badge ${rankClass}">#${rank}</div>
+                        <div class="name-cell">
+                            ${getLogoHtml(t.team)}
+                            <span class="name-text font-black text-slate-800">${t.team}</span>
+                        </div>
+                        <div class="text-center font-black text-base text-slate-800">${t.score}</div>
+                        <div class="text-right">
+                            <span class="inline-block px-2 py-1 bg-amber-100 text-amber-800 font-black text-xs rounded-lg">+${pts} PTS</span>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function renderIndivSubtabs() {
+            const container = document.getElementById('indiv-subtabs');
+            let options = `<option value="SEASON" ${activeIndivSubtab === 'SEASON' ? 'selected' : ''}>⭐ Season Average</option>`;
+            
+            ALL_TOURNAMENTS.forEach(t => {
+                const hasScores = INDIVIDUAL_PLAYERS.some(p => p.scores && p.scores[t] !== undefined);
+                const playedBadge = hasScores ? ' ✓' : '';
+                options += `<option value="${t}" ${activeIndivSubtab === t ? 'selected' : ''}>${t}${playedBadge}</option>`;
+            });
+
+            container.innerHTML = options;
+        }
+
+        function setIndivSubtab(sub) {
+            activeIndivSubtab = sub;
+            renderIndividualStandings();
+        }
+
+        function renderIndividualStandings() {
+            const list = document.getElementById('indiv-standings-list');
+            const col3 = document.getElementById('indiv-col-3');
+            col3.innerText = activeIndivSubtab === 'SEASON' ? "Average" : "Score";
+
+            if (activeIndivSubtab === 'SEASON') {
+                const players = computeIndividualSeasonData()
+                    .filter(p => p.roundsPlayed > 0)
+                    .sort((a,b) => a.avg - b.avg);
+
+                list.innerHTML = players.map((p, idx) => {
+                    const rank = idx + 1;
+                    const schoolMatch = SCHOOLS.find(s => s.id === p.school);
+                    const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+
+                    return `<div class="lb-grid-indiv row-animate indiv-row" style="border-left: 5px solid ${schoolMatch ? schoolMatch.color : '#cbd5e1'}; animation-delay: ${idx * 0.02}s">
+                        <div class="rank-badge ${rankClass}">#${rank}</div>
+                        <div class="name-cell">
+                            ${getLogoHtml(p.school)}
+                            <span class="name-text interactive-name font-bold" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
+                        </div>
+                        <div class="text-center font-black text-base text-slate-800">${p.avgDisplay}</div>
+                    </div>`;
+                }).join('');
+
+            } else {
+                const playersInEvent = INDIVIDUAL_PLAYERS
+                    .filter(p => p.scores && p.scores[activeIndivSubtab] !== undefined)
+                    .map(p => ({ ...p, score: p.scores[activeIndivSubtab] }))
+                    .sort((a,b) => a.score - b.score);
+
+                if (playersInEvent.length === 0) {
+                    list.innerHTML = `<div class="p-10 text-center bg-white rounded-2xl border text-slate-400 font-bold uppercase italic shadow-sm">
+                        <div class="text-2xl mb-1">🏌️</div>
+                        No individual scores recorded for ${activeIndivSubtab} yet
+                    </div>`;
+                    return;
+                }
+
+                list.innerHTML = playersInEvent.map((p, idx) => {
+                    const rank = idx + 1;
+                    const schoolMatch = SCHOOLS.find(s => s.id === p.school);
+                    const rankClass = rank === 1 ? 'rank-1' : (rank === 2 ? 'rank-2' : (rank === 3 ? 'rank-3' : ''));
+
+                    return `<div class="lb-grid-indiv row-animate indiv-row" style="border-left: 5px solid ${schoolMatch ? schoolMatch.color : '#cbd5e1'}; animation-delay: ${idx * 0.02}s">
+                        <div class="rank-badge ${rankClass}">#${rank}</div>
+                        <div class="name-cell">
+                            ${getLogoHtml(p.school)}
+                            <span class="name-text interactive-name font-bold" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
+                        </div>
+                        <div class="text-center font-black text-base text-emerald-700">${p.score}</div>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        function filterIndivList(query) {
+            const rows = document.querySelectorAll('.indiv-row');
+            const term = (query || '').toLowerCase();
+            rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(term) ? '' : 'none');
+        }
+
+        function openTeamModal(schoolId) {
+            const schoolMatch = SCHOOLS.find(s => s.id === schoolId.toUpperCase());
+            if (!schoolMatch) return;
+
+            const modal = document.getElementById('team-modal');
+            const teamSeason = computeTeamSeasonData().find(t => t.id === schoolMatch.id) || {};
+            const teamPlayers = computeIndividualSeasonData()
+                .filter(p => p.school === schoolMatch.id)
+                .sort((a,b) => a.avg - b.avg);
+
+            document.getElementById('team-modal-header-bg').style.backgroundColor = schoolMatch.color;
+            document.getElementById('team-modal-logo').innerHTML = `<img src="${schoolMatch.url}" class="w-8 h-8 object-contain" alt="${schoolMatch.name}" onerror="${imgFallback}">`;
+            document.getElementById('team-modal-name').innerText = schoolMatch.name;
+
+            // Build Roster Table Rows
+            const rosterRows = teamPlayers.map(p => {
+                const barnScore = p.scores["The Barn"] !== undefined ? p.scores["The Barn"] : "—";
+                return `
+                    <tr class="border-b hover:bg-slate-50 text-xs">
+                        <td class="py-2.5 px-3 font-bold text-slate-800">
+                            <span class="interactive-name" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
+                        </td>
+                        <td class="py-2.5 px-3 text-center font-black text-emerald-700">${barnScore}</td>
+                        <td class="py-2.5 px-3 text-center font-black text-slate-800">${p.avgDisplay}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('team-modal-content').innerHTML = `
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-white p-3 rounded-xl border shadow-sm">
+                        <span class="text-[10px] font-black text-slate-400 block uppercase tracking-wider">Total Points</span>
+                        <span class="text-lg sm:text-xl font-black text-amber-600">${teamSeason.totalPoints || 0} PTS</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border shadow-sm">
+                        <span class="text-[10px] font-black text-slate-400 block uppercase tracking-wider">Stroke Avg</span>
+                        <span class="text-lg sm:text-xl font-black text-slate-800">${teamSeason.avgScore || '-'}</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border shadow-sm">
+                        <span class="text-[10px] font-black text-slate-400 block uppercase tracking-wider">Wins</span>
+                        <span class="text-lg sm:text-xl font-black text-emerald-700">${teamSeason.wins || 0}</span>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border shadow-sm overflow-hidden">
+                    <div class="p-3 bg-slate-100 border-b flex justify-between items-center">
+                        <h4 class="font-black text-slate-700 uppercase text-xs tracking-wider">Team Roster & Scores</h4>
+                        <span class="text-[10px] font-black uppercase text-slate-400">${teamPlayers.length} Golfers</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase border-b">
+                                    <th class="py-2 px-3">Player Name</th>
+                                    <th class="py-2 px-3 text-center">The Barn</th>
+                                    <th class="py-2 px-3 text-center">Avg</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${rosterRows || '<tr><td colspan="3" class="p-4 text-center text-slate-400 text-xs">No roster members found</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function openPlayerModal(playerName) {
+            const player = computeIndividualSeasonData().find(p => p.name === playerName);
+            if (!player) return;
+
+            const modal = document.getElementById('player-modal');
+            const schoolMatch = SCHOOLS.find(s => s.id === player.school);
+
+            document.getElementById('modal-header-bg').style.backgroundColor = schoolMatch ? schoolMatch.color : '#1e293b';
+            document.getElementById('modal-logo').innerHTML = getLogoHtml(player.school, '28px');
+            document.getElementById('modal-player-name').innerText = player.name;
+            document.getElementById('modal-player-school').innerText = player.school || "Region 5 High School";
+
+            const scoreRows = ALL_TOURNAMENTS.map(t => {
+                const sc = player.scores[t];
+                return `<div class="flex justify-between items-center py-2 border-b text-xs">
+                    <span class="font-bold text-slate-600">${t}</span>
+                    <span class="font-black text-slate-900 ${sc ? 'text-emerald-700' : 'text-slate-300'}">${sc ? sc + ' strokes' : '—'}</span>
+                </div>`;
+            }).join('');
+
+            document.getElementById('modal-player-content').innerHTML = `
+                <div class="grid grid-cols-2 gap-3 text-center mb-2">
+                    <div class="bg-white p-3 rounded-xl border shadow-sm">
+                        <span class="text-[10px] font-black text-slate-400 block uppercase tracking-wider">Season Average</span>
+                        <span class="text-xl font-black text-slate-800">${player.avgDisplay}</span>
+                    </div>
+                    <div class="bg-white p-3 rounded-xl border shadow-sm">
+                        <span class="text-[10px] font-black text-emerald-600 block uppercase tracking-wider">Rounds Played</span>
+                        <span class="text-xl font-black text-emerald-700">${player.roundsPlayed}</span>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border shadow-sm space-y-1">
+                    <h4 class="font-black text-slate-400 uppercase text-[10px] tracking-wider mb-2">Tournament Breakdown</h4>
+                    ${scoreRows}
+                </div>
+            `;
+
+            modal.classList.remove('hidden');
+        }
+
+        function closePlayerModal(e) {
+            if (e.target.id === 'player-modal') document.getElementById('player-modal').classList.add('hidden');
+        }
+
+        function closeTeamModal(e) {
+            if (e.target.id === 'team-modal') document.getElementById('team-modal').classList.add('hidden');
+        }
+
+        window.onload = () => {
+            renderSchoolBanner();
+            renderTeamSubtabs();
+            renderIndivSubtabs();
+            renderTeamStandings();
+            renderIndividualStandings();
+        };
+    </script>
+</body>
+</html>
