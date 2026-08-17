@@ -847,7 +847,7 @@
                 const sc = player.scores[t];
                 return `<div class="flex justify-between items-center py-2 border-b text-xs">
                     <span class="font-bold text-slate-600">${t}</span>
-                    <span class="font-black ${sc ? 'text-slate-900' : 'text-slate-300'}">${sc ? sc + ' strokes' : '—'}</span>
+                    <span class="font-black ${sc ? 'text-slate-900' : 'text-slate-300'}">${sc ? sc + ' ' : '—'}</span>
                 </div>`;
             }).join('');
 
