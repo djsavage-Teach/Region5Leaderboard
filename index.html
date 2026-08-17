@@ -774,15 +774,29 @@
             document.getElementById('team-modal-logo').innerHTML = `<img src="${schoolMatch.url}" class="w-8 h-8 object-contain" alt="${schoolMatch.name}" onerror="${imgFallback}">`;
             document.getElementById('team-modal-name').innerText = schoolMatch.name;
 
-            // Build Roster Table Rows
+            // Filter to only tournaments that have at least 1 recorded score
+            const playedTournaments = ALL_TOURNAMENTS.filter(t => 
+                INDIVIDUAL_PLAYERS.some(p => p.scores && p.scores[t] !== undefined)
+            );
+
+            // Dynamically generate column headers for played tournaments
+            const tourneyHeaders = playedTournaments.map(t => 
+                `<th class="py-2 px-3 text-center whitespace-nowrap">${t}</th>`
+            ).join('');
+
+            // Build Roster Table Rows for played tournaments
             const rosterRows = teamPlayers.map(p => {
-                const barnScore = p.scores["The Barn"] !== undefined ? p.scores["The Barn"] : "—";
+                const scoreCells = playedTournaments.map(t => {
+                    const sc = p.scores && p.scores[t] !== undefined ? p.scores[t] : "—";
+                    return `<td class="py-2.5 px-3 text-center font-black text-slate-800">${sc}</td>`;
+                }).join('');
+
                 return `
                     <tr class="border-b hover:bg-slate-50 text-xs">
-                        <td class="py-2.5 px-3 font-bold text-slate-800">
+                        <td class="py-2.5 px-3 font-bold text-slate-800 whitespace-nowrap">
                             <span class="interactive-name" onclick="openPlayerModal('${p.name.replace(/'/g, "\\'")}')">${p.name}</span>
                         </td>
-                        <td class="py-2.5 px-3 text-center font-black text-slate-800">${barnScore}</td>
+                        ${scoreCells}
                         <td class="py-2.5 px-3 text-center font-black text-slate-800">${p.avgDisplay}</td>
                     </tr>
                 `;
@@ -813,8 +827,8 @@
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase border-b">
-                                    <th class="py-2 px-3">Player Name</th>
-                                    <th class="py-2 px-3 text-center">The Barn</th>
+                                    <th class="py-2 px-3 text-left">Player Name</th>
+                                    ${tourneyHeaders}
                                     <th class="py-2 px-3 text-center">Avg</th>
                                 </tr>
                             </thead>
