@@ -495,6 +495,7 @@
             { name: "Boston Chambers", school: "WEST FIELD", scores: { "The Barn": 79, "Cranefield": 83, "The Bluff": 78, "Eagle Mtn": 84 } },
             { name: "Casey Scott", school: "WEST FIELD", scores: {} }
         ];
+
         let activeTeamSubtab = "SEASON";
         let activeIndivSubtab = "SEASON";
 
@@ -540,26 +541,38 @@
         }
 
         function computeIndividualSeasonData() {
+            // Find all tournaments played so far in Region 5
+            const playedTournaments = ALL_TOURNAMENTS.filter(t => 
+                INDIVIDUAL_PLAYERS.some(p => p.scores && typeof p.scores[t] === 'number' && !isNaN(p.scores[t]))
+            );
+            const totalEventsPlayed = playedTournaments.length;
+
             return INDIVIDUAL_PLAYERS.map(player => {
-                const tourneyKeys = Object.keys(player.scores || {});
-                let totalStrokes = 0;
-                let roundsPlayed = 0;
+                const playerScores = playedTournaments
+                    .map(t => player.scores ? player.scores[t] : undefined)
+                    .filter(sc => typeof sc === 'number' && !isNaN(sc));
 
-                tourneyKeys.forEach(t => {
-                    const sc = player.scores[t];
-                    if (typeof sc === 'number' && !isNaN(sc)) {
-                        totalStrokes += sc;
-                        roundsPlayed += 1;
-                    }
-                });
+                const roundsPlayed = playerScores.length;
+                let effectiveScores = [...playerScores];
 
-                const avg = roundsPlayed > 0 ? (totalStrokes / roundsPlayed).toFixed(2) : 999;
+                // Drop highest score only if player attended ALL tournaments played so far
+                if (roundsPlayed === totalEventsPlayed && totalEventsPlayed > 1) {
+                    const maxScore = Math.max(...effectiveScores);
+                    const maxIdx = effectiveScores.indexOf(maxScore);
+                    effectiveScores.splice(maxIdx, 1);
+                }
+
+                const totalStrokes = effectiveScores.reduce((a, b) => a + b, 0);
+                const avg = effectiveScores.length > 0 ? (totalStrokes / effectiveScores.length).toFixed(2) : 999;
+                const isIneligible = (totalEventsPlayed - roundsPlayed) >= 2;
+
                 return {
                     ...player,
                     roundsPlayed,
                     totalStrokes,
-                    avg: roundsPlayed > 0 ? parseFloat(avg) : 999,
-                    avgDisplay: roundsPlayed > 0 ? avg : "-"
+                    avg: effectiveScores.length > 0 ? parseFloat(avg) : 999,
+                    avgDisplay: effectiveScores.length > 0 ? avg : "-",
+                    isIneligible
                 };
             });
         }
@@ -775,6 +788,7 @@
             document.getElementById('team-modal-logo').innerHTML = `<img src="${schoolMatch.url}" class="w-8 h-8 object-contain" alt="${schoolMatch.name}" onerror="${imgFallback}">`;
             document.getElementById('team-modal-name').innerText = schoolMatch.name;
 
+            // Build Roster Table Rows
             // Filter to only tournaments that have at least 1 recorded score
             const playedTournaments = ALL_TOURNAMENTS.filter(t => 
                 INDIVIDUAL_PLAYERS.some(p => p.scores && p.scores[t] !== undefined)
